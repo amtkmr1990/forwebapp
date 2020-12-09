@@ -6,13 +6,53 @@
             "defaultValue": "amtkmr",
             "type": "String"
         },
-        "serverfarms_ASP_forwebapp_8c32_externalid": {
-            "defaultValue": "/subscriptions/7306921f-9920-4a71-b20f-42c1d01efcf3/resourceGroups/forwebapp/providers/Microsoft.Web/serverfarms/ASP-forwebapp-8c32",
-            "type": "String"
-        }
+        "appServicePlanName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "appServicePlanSkuName": {
+            "type": "string",
+            "defaultValue": "S1",
+            "allowedValues": [
+                "F1",
+                "D1",
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+            ],
+            "metadata": {
+            "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+            }
+    }
     },
-    "variables": {},
+    "variables": {
+    "appHostingPlanNameVar": "[concat(parameters('appServicePlanName'),'-apps')]"
+    },
     "resources": [
+        {
+      "name": "[variables('appHostingPlanNameVar')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "sku": {
+        "name": "[parameters('appServicePlanSkuName')]"
+      },
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "appServicePlan"
+      },
+      "properties": {
+        "name": "[variables('appHostingPlanNameVar')]",
+        "numberOfWorkers": 1
+      },
+    },
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
